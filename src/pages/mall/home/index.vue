@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { mallProductApi } from '@@/apis/mall/product'
+import { mallProductApi } from "@@/apis/mall/product"
 import { getFullUrl } from "@@/apis/request"
 import defaultAvatarIcon from "@@/assets/images/user/default-mall-avatar.png"
-import { Right } from '@element-plus/icons-vue'
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useCategoryStore } from '@/pinia/stores/category'
+import { Right } from "@element-plus/icons-vue"
+import { computed, onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useCategoryStore } from "@/pinia/stores/category"
 import { useUserStore } from "@/pinia/stores/user"
-import { bannerApi } from './apis'
+import { bannerApi } from "./apis"
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -44,8 +44,8 @@ const recommendList = ref<any[]>([])
 
 // 金刚区点击跳转
 function handleNavClick(nav: any) {
-  if (nav.name === '更多') {
-    router.push('/mall/category')
+  if (nav.name === "更多") {
+    router.push("/mall/category")
   } else {
     router.push(`/mall/category?categoryId=${nav.id}`)
   }
@@ -77,8 +77,8 @@ async function loadMoreGoods() {
         price: item.price,
         sales: item.salesShow || 0,
         tags: [
-          item.isNew ? '新品' : '',
-          item.isRecommend ? '今日推荐' : ''
+          item.isNew ? "新品" : "",
+          item.isRecommend ? "今日推荐" : ""
         ].filter(Boolean),
         img: getFullUrl(item.pic)
       }))
@@ -94,7 +94,7 @@ async function loadMoreGoods() {
       }
     }
   } catch (error) {
-    console.error('加载更多商品失败:', error)
+    console.error("加载更多商品失败:", error)
   }
 }
 
@@ -113,7 +113,7 @@ async function initData() {
       newList.value = newRes.data.map((item: any) => ({
         id: item.id,
         name: item.productName,
-        subtitle: '官方严选',
+        subtitle: "官方严选",
         price: item.price,
         img: getFullUrl(item.pic)
       }))
@@ -124,7 +124,7 @@ async function initData() {
       todayList.value = todayRes.data.map((item: any) => ({
         id: item.id,
         name: item.productName,
-        desc: '精选好物 官方严选',
+        desc: "精选好物 官方严选",
         price: item.price,
         img: getFullUrl(item.pic)
       }))
@@ -141,31 +141,31 @@ async function initData() {
     }
     // 初始化金刚区
     navList.value = [
-      { id: 1, name: '时令生鲜', icon: '🍎' },
-      { id: 5, name: '粮油副食', icon: '🌾' },
-      { id: 9, name: '休闲零食', icon: '🍪' },
-      { id: 13, name: '酒水乳饮', icon: '🥛' },
-      { id: 17, name: '方便速食', icon: '🍜' },
-      { id: 20, name: '母婴食品', icon: '🍼' },
-      { id: 24, name: '环球美食', icon: '🌍' },
-      { id: 28, name: '厨房用品', icon: '🍳' },
-      { id: 35, name: '冷链速冻', icon: '❄️' },
-      { id: -1, name: '更多', icon: '📦' },
+      { id: 4, name: "生鲜果蔬", icon: "🍎" },
+      { id: 3, name: "粮油调味", icon: "🌾" },
+      { id: 1, name: "休闲零食", icon: "🍪" },
+      { id: 5, name: "乳品烘焙", icon: "🥛" },
+      { id: 6, name: "方便速食", icon: "🍜" },
+      { id: 7, name: "滋补养生", icon: "🍵" },
+      { id: 8, name: "环球美食", icon: "🌍" },
+      { id: 9, name: "有机健康", icon: "🥦" },
+      { id: 2, name: "饮料饮品", icon: "🥤" },
+      { id: -1, name: "更多", icon: "📦" }
     ]
     loadMoreGoods()
   } catch (error) {
-    console.error('获取新品数据失败:', error)
+    console.error("获取新品数据失败:", error)
   }
-    // 初始化分类
-  categoryList.value = Array.from({ length: 12 }).map((_, i) => ({ id: i, name: `热门分类 ${i+1}` }))
+  // 初始化分类
+  categoryList.value = Array.from({ length: 12 }).map((_, i) => ({ id: i, name: `热门分类 ${i + 1}` }))
 }
 
 // 点击轮播图跳转逻辑
 function handleBannerClick(item: any) {
   if (item.jumpUrl) {
     // 如果是外部链接直接跳转，如果是内部路径用 router.push
-    if (item.jumpUrl.startsWith('http')) {
-      window.open(item.jumpUrl, '_blank')
+    if (item.jumpUrl.startsWith("http")) {
+      window.open(item.jumpUrl, "_blank")
     } else {
       router.push(item.jumpUrl)
     }
@@ -185,17 +185,14 @@ onMounted(async () => {
 
 <template>
   <div class="mall-home bg-gray-50 min-h-screen pb-10">
-
     <div v-if="loading" class="container mx-auto px-4 py-4">
       <el-skeleton :rows="10" animated />
     </div>
 
     <div v-else class="container mx-auto px-2 md:px-4 transition-opacity duration-500">
-
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 my-4">
-
         <div class="hidden md:block md:col-span-2 bg-white rounded-lg shadow-sm h-[400px] p-2 overflow-y-auto custom-scrollbar">
-                    <div v-if="categoryStore.loading" class="p-4 space-y-4">
+          <div v-if="categoryStore.loading" class="p-4 space-y-4">
             <el-skeleton :rows="8" animated />
           </div>
 
@@ -209,16 +206,20 @@ onMounted(async () => {
               <span class="text-sm text-gray-700 group-hover:text-primary group-hover:font-bold">
                 {{ item.categoryName }}
               </span>
-              <el-icon class="text-gray-300 group-hover:text-primary"><ArrowRight /></el-icon>
+              <el-icon class="text-gray-300 group-hover:text-primary">
+                <ArrowRight />
+              </el-icon>
 
               <div
                 v-if="item.children && item.children.length > 0"
-                class="hidden group-hover:flex absolute left-[100%] top-0 w-[400px] min-h-[400px] bg-white shadow-xl z-50 border-l border-gray-100 p-4 animate-fade-in">
+                class="hidden group-hover:flex absolute left-[100%] top-0 w-[400px] min-h-[400px] bg-white shadow-xl z-50 border-l border-gray-100 p-4 animate-fade-in"
+              >
                 <div class="grid grid-cols-2 gap-4">
                   <div
                     v-for="sub in item.children" :key="sub.categoryId"
                     class="text-sm text-gray-600 hover:text-primary cursor-pointer"
-                    @click="router.push(`/mall/category?categoryId=${sub.categoryId}`)">
+                    @click="router.push(`/mall/category?categoryId=${sub.categoryId}`)"
+                  >
                     {{ sub.categoryName }}
                   </div>
                 </div>
@@ -232,7 +233,8 @@ onMounted(async () => {
             <el-carousel-item v-for="item in bannerList" :key="item.id">
               <el-image
                 :src="item.imgUrl" :alt="item.title" fit="fill" class="w-full h-full cursor-pointer"
-                @click="handleBannerClick(item)">
+                @click="handleBannerClick(item)"
+              >
                 <template #placeholder>
                   <div class="w-full h-full bg-gray-100 flex items-center justify-center">
                     <el-icon class="is-loading">
@@ -248,18 +250,32 @@ onMounted(async () => {
         <div class="hidden md:flex md:col-span-2 flex-col gap-4">
           <div class="bg-white rounded-lg shadow-sm p-4 flex-1 flex flex-col items-center justify-center">
             <el-avatar :size="60" :src="userStore.userAvatar ? userStore.userAvatar : defaultAvatarIcon" />
-            <div class="mt-2 font-bold text-gray-700 text-center line-height-5">{{userStore.username ? userStore.username : '用户'}}<br>欢迎光临</div>
+            <div class="mt-2 font-bold text-gray-700 text-center line-height-5">
+              {{ userStore.username ? userStore.username : '用户' }}<br>欢迎光临
+            </div>
             <div class="mt-4 flex gap-2" v-if="!userStore.username">
-              <el-button type="primary" round size="small" @click="router.push(`/mall/login`)">登录</el-button>
-              <el-button round size="small" @click="router.push(`/mall/register`)">注册</el-button>
+              <el-button type="primary" round size="small" @click="router.push(`/mall/login`)">
+                登录
+              </el-button>
+              <el-button round size="small" @click="router.push(`/mall/register`)">
+                注册
+              </el-button>
             </div>
           </div>
           <div class="bg-white rounded-lg shadow-sm p-4 h-1/2">
-            <div class="font-bold mb-2 text-sm">商城快报</div>
+            <div class="font-bold mb-2 text-sm">
+              商城快报
+            </div>
             <div class="text-xs text-gray-500 space-y-2">
-              <p class="truncate cursor-pointer hover:text-primary">🔥 618大促预告：全场5折起</p>
-              <p class="truncate cursor-pointer hover:text-primary">📢 物流配送延迟通知</p>
-              <p class="truncate cursor-pointer hover:text-primary">✨ 新用户注册领100元券</p>
+              <p class="truncate cursor-pointer hover:text-primary">
+                🔥 618大促预告：全场5折起
+              </p>
+              <p class="truncate cursor-pointer hover:text-primary">
+                📢 物流配送延迟通知
+              </p>
+              <p class="truncate cursor-pointer hover:text-primary">
+                ✨ 新用户注册领100元券
+              </p>
             </div>
           </div>
         </div>
@@ -276,22 +292,26 @@ onMounted(async () => {
         </div>
       </div>
 
-                  <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+      <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
         <div class="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
-           <div class="w-1 h-6 bg-blue-500 rounded-r-full" />
-           <h3 class="text-lg font-bold text-gray-800">📅 今日推荐</h3>
-           <span class="text-xs text-gray-400 ml-auto">精选好物 官方严选</span>
+          <div class="w-1 h-6 bg-blue-500 rounded-r-full" />
+          <h3 class="text-lg font-bold text-gray-800">
+            📅 今日推荐
+          </h3>
+          <span class="text-xs text-gray-400 ml-auto">精选好物 官方严选</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <router-link
             v-for="item in todayList" :key="item.id"
             class="bg-gray-50 rounded-lg p-3 flex gap-3 cursor-pointer hover:bg-gray-100 transition-colors group"
-            :to="`/mall/product/${item.id}`">
+            :to="`/mall/product/${item.id}`"
+          >
             <div class="w-24 h-24 flex-shrink-0 bg-white rounded overflow-hidden">
               <el-image
                 :src="item.img" fit="cover"
-                class="w-full h-full group-hover:scale-110 transition-transform duration-300">
+                class="w-full h-full group-hover:scale-110 transition-transform duration-300"
+              >
                 <template #error>
                   <div class="flex items-center justify-center w-full h-full bg-gray-100">
                     <el-icon class="text-gray-300">
@@ -303,13 +323,18 @@ onMounted(async () => {
             </div>
             <div class="flex flex-col justify-between flex-1 py-1">
               <div>
-                <div class="text-sm font-bold text-gray-800 line-clamp-1">{{ item.name }}</div>
-                <div class="text-xs text-gray-500 mt-1 line-clamp-2">{{ item.desc }}</div>
+                <div class="text-sm font-bold text-gray-800 line-clamp-1">
+                  {{ item.name }}
+                </div>
+                <div class="text-xs text-gray-500 mt-1 line-clamp-2">
+                  {{ item.desc }}
+                </div>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-red-500 font-bold">￥{{ item.price }}</span>
                 <div
-                  class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                  class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs group-hover:bg-blue-500 group-hover:text-white transition-colors"
+                >
                   <el-icon>
                     <Right />
                   </el-icon>
@@ -324,7 +349,9 @@ onMounted(async () => {
         <div class="flex justify-between items-end mb-4 border-b border-gray-100 pb-3">
           <div class="flex items-center gap-2">
             <div class="w-1 h-6 bg-emerald-500 rounded-r-full" />
-            <h3 class="text-lg font-bold text-gray-800">🌱 新品首发</h3>
+            <h3 class="text-lg font-bold text-gray-800">
+              🌱 新品首发
+            </h3>
             <span class="hidden md:inline-block text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
               每日 10:00 上新
             </span>
@@ -336,23 +363,29 @@ onMounted(async () => {
 
         <div class="flex overflow-x-auto gap-4 pb-4 custom-x-scrollbar">
           <router-link
-               v-for="item in newList" :key="item.id"
-               class="flex-shrink-0 w-32 md:w-44 group cursor-pointer"
-               :to="`/mall/product/${item.id}`">
-
+            v-for="item in newList" :key="item.id"
+            class="flex-shrink-0 w-32 md:w-44 group cursor-pointer"
+            :to="`/mall/product/${item.id}`"
+          >
             <div class="relative w-full aspect-[1/1] bg-gray-50 rounded-lg overflow-hidden mb-3 border border-gray-100">
               <el-image :src="item.img" loading="lazy" fit="cover" class="w-full h-full group-hover:scale-105 transition-transform duration-500" />
-              <div class="absolute top-0 left-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg shadow-sm z-10">NEW</div>
+              <div class="absolute top-0 left-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg shadow-sm z-10">
+                NEW
+              </div>
               <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                 <div class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-emerald-600 hover:bg-emerald-500 hover:text-white">
-                    <el-icon><Right /></el-icon>
-                 </div>
+                <div class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-emerald-600 hover:bg-emerald-500 hover:text-white">
+                  <el-icon><Right /></el-icon>
+                </div>
               </div>
             </div>
 
             <div class="space-y-1">
-              <div class="text-sm font-medium text-gray-800 truncate">{{ item.name }}</div>
-              <div class="text-xs text-gray-400 truncate">{{ item.subtitle }}</div>
+              <div class="text-sm font-medium text-gray-800 truncate">
+                {{ item.name }}
+              </div>
+              <div class="text-xs text-gray-400 truncate">
+                {{ item.subtitle }}
+              </div>
               <div class="flex items-center justify-between mt-1">
                 <span class="font-bold text-gray-900">￥{{ item.price }}</span>
                 <span class="text-[10px] text-emerald-600 bg-emerald-50 px-1 rounded">新品</span>
@@ -363,22 +396,26 @@ onMounted(async () => {
       </div>
 
       <h3 class="text-xl font-bold text-center my-6 flex items-center justify-center gap-2">
-        <el-icon class="text-primary"><StarFilled /></el-icon> 猜你喜欢
+        <el-icon class="text-primary">
+          <StarFilled />
+        </el-icon> 猜你喜欢
       </h3>
 
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">
         <router-link
           v-for="product in recommendList" :key="product.id"
           class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group cursor-pointer"
-          :to="`/mall/product/${product.id}`">
-
+          :to="`/mall/product/${product.id}`"
+        >
           <div class="w-full aspect-square bg-gray-100 overflow-hidden relative">
             <el-image :src="product.img" loading="lazy" fit="cover" class="w-full h-full" />
 
             <div
-              class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+              class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+            >
               <div
-                class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-blue-600 hover:bg-blue-500 hover:text-white">
+                class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-sm text-blue-600 hover:bg-blue-500 hover:text-white"
+              >
                 <el-icon>
                   <Right />
                 </el-icon>
@@ -387,7 +424,9 @@ onMounted(async () => {
           </div>
 
           <div class="p-3">
-            <h4 class="text-sm text-gray-800 line-clamp-2 h-10 mb-2">{{ product.name }}</h4>
+            <h4 class="text-sm text-gray-800 line-clamp-2 h-10 mb-2">
+              {{ product.name }}
+            </h4>
             <div class="flex justify-between items-end">
               <div>
                 <span class="text-xs text-red-500 font-bold">￥</span>
@@ -398,7 +437,8 @@ onMounted(async () => {
             <div class="mt-2 flex gap-1 h-5">
               <span
                 v-for="tag in product.tags" :key="tag"
-                class="text-[10px] px-1 py-0.5 border border-red-200 text-red-500 rounded">
+                class="text-[10px] px-1 py-0.5 border border-red-200 text-red-500 rounded"
+              >
                 {{ tag }}
               </span>
             </div>
@@ -407,10 +447,13 @@ onMounted(async () => {
       </div>
 
       <div class="text-center py-8 text-gray-400 text-sm">
-        <el-divider v-if="noMore">没有更多了</el-divider>
-        <el-button v-else :loading="loadingMore" round @click="loadMore">加载更多</el-button>
+        <el-divider v-if="noMore">
+          没有更多了
+        </el-divider>
+        <el-button v-else :loading="loadingMore" round @click="loadMore">
+          加载更多
+        </el-button>
       </div>
-
     </div>
   </div>
 </template>
