@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getFullUrl } from "@@/apis/request"
-import defaultProductIcon from "@@/assets/images/product/default-product.png"
 import { getToken } from "@@/utils/cache/cookies"
 import { Plus } from '@element-plus/icons-vue'
 import { createEditor, createToolbar } from '@wangeditor/editor'
@@ -42,6 +41,8 @@ const productForm = reactive({
   specs: [] as any[]
 })
 
+// 相册数据
+const albumFileList = ref<any[]>([])
 // SKU 列表数据
 const skuList = ref<any[]>([])
 
@@ -116,7 +117,8 @@ async function handleSubmit() {
         stock: sku.stock,
         lowStock: sku.lowStock || 10,
         spData: sku.spData,
-        pic: stripPrefix(sku.pic),
+        // 如果 SKU 没单独设置图片，自动使用商品主图
+        pic: stripPrefix(sku.pic) || stripPrefix(productForm.pic),
         specName: sku.specName
       }))
     }
@@ -214,8 +216,6 @@ function generateSkuList() {
   })
 }
 
-// 相册数据
-const albumFileList = ref<any[]>([])
 const previewImage = ref('')
 const previewVisible = ref(false)
 
@@ -416,11 +416,23 @@ onBeforeUnmount(() => {
           <el-form-item label="计量单位">
             <el-input v-model="productForm.unit" />
           </el-form-item>
-          <el-form-item label="商品主图">
-            <el-image v-if="productForm.pic" :src="productForm.pic" :preview-src-list="[productForm.pic]" style="width: 160px; height: 160px; object-fit: contain;" />
-            <el-image v-else :src="defaultProductIcon" style="width: 160px; height: 160px; object-fit: contain;"/>
+          <el-form-item label="商品相册">
+            <div class="album-wrapper">
+              <el-upload
+                v-model:file-list="albumFileList" :action="uploadUrl" name="file"
+                list-type="picture-card" :before-upload="beforeImageUpload" :on-success="handleUploadSuccess" :on-error="handleUploadError"
+                :headers="uploadHeaders" :on-preview="handlePictureCardPreview">
+                <el-icon>
+                  <Plus />
+                </el-icon>
+              </el-upload>
+              <div class="tip">建议尺寸 800x800，最多上传 5 张，首张默认为主图</div>
+            </div>
           </el-form-item>
         </el-form>
+        <el-dialog v-model="previewVisible">
+          <img w-full :src="previewImage" alt="预览图像">
+        </el-dialog>
       </el-card>
 
       <el-card v-show="activeStep === 1">
@@ -453,7 +465,7 @@ onBeforeUnmount(() => {
                 <el-upload
                   :action="uploadUrl" :headers="uploadHeaders" :show-file-list="false" :before-upload="beforeImageUpload"
                   :on-success="(res) => row.pic = getFullUrl(res.data)" name="file">
-                  <img v-if="row.pic" :src="row.pic" style="width: 30px; height: 30px; object-fit: cover;">
+                  <img v-if="row.pic || productForm.pic" :src="row.pic || productForm.pic" style="width: 30px; height: 30px; object-fit: cover;">
                   <el-button v-else icon="Plus" circle size="small" />
                 </el-upload>
               </template>
@@ -490,20 +502,6 @@ onBeforeUnmount(() => {
 
       <el-card v-show="activeStep === 2">
         <el-form :model="productForm" label-width="100px">
-          <el-form-item label="商品相册">
-            <div class="album-wrapper">
-              <el-upload
-                v-model:file-list="albumFileList" :action="uploadUrl" name="file"
-                list-type="picture-card" :before-upload="beforeImageUpload" :on-success="handleUploadSuccess" :on-error="handleUploadError"
-                :headers="uploadHeaders" :on-preview="handlePictureCardPreview">
-                <el-icon>
-                  <Plus />
-                </el-icon>
-              </el-upload>
-              <div class="tip">建议尺寸 800x800，最多上传 5 张，首张默认为主图</div>
-            </div>
-          </el-form-item>
-
           <el-form-item label="详细介绍">
             <div style="border: 1px solid var(--el-border-color); width: 100%; border-radius: 4px;">
               <div id="editor-toolbar" style="border-bottom: 1px solid var(--el-border-color);" />
@@ -511,10 +509,6 @@ onBeforeUnmount(() => {
             </div>
           </el-form-item>
         </el-form>
-
-        <el-dialog v-model="previewVisible">
-          <img w-full :src="previewImage" alt="预览图像">
-        </el-dialog>
       </el-card>
     </div>
 
