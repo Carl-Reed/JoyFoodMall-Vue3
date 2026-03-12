@@ -28,7 +28,7 @@ function handleSelectAddress(id: number | string) {
 }
 
 
-// 获取真实地址列表
+// 获取收货地址列表
 async function fetchAddressList() {
   try {
     const res: any = await mallAddressApi.getAddressList()
