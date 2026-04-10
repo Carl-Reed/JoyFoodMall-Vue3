@@ -186,7 +186,7 @@ onMounted(() => {
       <el-button
         type="danger"
         plain
-        class="w-full !h-12 !rounded-xl !border-none bg-white shadow-sm font-bold"
+        class="w-full !h-12 !rounded-xl !border-none shadow-sm font-bold"
         @click="userStore.logout(); router.push('/')"
       >
         退出登录

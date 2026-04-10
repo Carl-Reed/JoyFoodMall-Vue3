@@ -20,7 +20,7 @@ const loading = ref(false)
 /** 管理员登录页面的路径 */
 const ADMIN_LOGIN_PATH = "/admin/login"
 
-/** * === 核心逻辑：Logo 点击暗门 === */
+/** * === 核心逻辑：点击暗门 === */
 const clickCount = ref(0)
 let resetTimer: ReturnType<typeof setTimeout> | null = null
 

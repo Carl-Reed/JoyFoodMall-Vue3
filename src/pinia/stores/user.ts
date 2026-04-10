@@ -1,6 +1,7 @@
 import { getCurrentUserApi, getUserAvatarApi } from "@@/apis/users"
 import { setToken as _setToken, getToken, removeToken } from "@@/utils/cache/cookies"
 import { pinia } from "@/pinia"
+import { useCartStore } from '@/pinia/stores/cart'
 import { resetRouter } from "@/router"
 import { routerConfig } from "@/router/config"
 import { useSettingsStore } from "./settings"
@@ -18,6 +19,8 @@ export const useUserStore = defineStore("user", () => {
   const tagsViewStore = useTagsViewStore()
 
   const settingsStore = useSettingsStore()
+
+  const cartStore = useCartStore()
 
   // 设置 Token
   const setToken = (value: string) => {
@@ -53,6 +56,8 @@ export const useUserStore = defineStore("user", () => {
     token.value = ""
     roles.value = []
     userAvatar.value = ""
+    username.value = ""
+    cartStore.clearCart()
     resetRouter()
     resetTagsView()
   }
