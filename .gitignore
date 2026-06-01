@@ -3,6 +3,9 @@ dist
 node_modules
 .eslintcache
 vite.config.*.timestamp*
+.cursor
+.husky
+.trae
 
 # MacOS
 .DS_Store
