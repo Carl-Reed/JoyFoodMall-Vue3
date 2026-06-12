@@ -24,6 +24,55 @@ const total = ref(0)
 // --- 折叠逻辑 ---
 const expandedOrders = ref<number[]>([]) // 存储已展开的订单 ID
 
+// --- 倒计时相关逻辑 ---
+const countdowns = reactive<Record<number, string>>({}) // 存储每个订单的倒计时文本
+let globalTimer: any = null // 全局定时器实例
+const TIMEOUT_MS = 30 * 60 * 1000 // 订单超时时间
+
+// 初始化并启动倒计时计算
+function startCountdown() {
+  if (globalTimer) clearInterval(globalTimer)
+
+  const updateCountdowns = () => {
+    const now = Date.now()
+    let needRefresh = false
+
+    orderList.value.forEach((order) => {
+      // 只有状态为待付款(0)的订单才需要倒计时
+      if (order.status === 0 && order.createTime) {
+
+        const safeDateStr = order.createTime.replace('T', ' ').replace(/-/g, '/')
+        const createTimeMs = new Date(safeDateStr).getTime()
+        const expireTimeMs = createTimeMs + TIMEOUT_MS
+        const remainMs = expireTimeMs - now
+
+        if (remainMs > 0) {
+          const minutes = Math.floor(remainMs / 1000 / 60)
+          const seconds = Math.floor((remainMs / 1000) % 60)
+          countdowns[order.id] = `${minutes}分${seconds.toString().padStart(2, '0')}秒`
+        } else {
+          const isJustExpired = countdowns[order.id] && countdowns[order.id] !== '已超时'
+
+          countdowns[order.id] = '已超时'
+
+          if (isJustExpired) {
+            needRefresh = true
+          }
+        }
+      }
+    })
+
+    // 若有订单的倒计时结束，自动触发刷新
+    if (needRefresh) {
+      clearInterval(globalTimer)
+      fetchOrders()
+    }
+  }
+
+  updateCountdowns()
+  globalTimer = setInterval(updateCountdowns, 1000)
+}
+
 // --- 配置字典 ---
 const statusConfig: any = {
   0: { text: '待付款', type: 'danger' },
@@ -81,6 +130,7 @@ async function fetchOrders() {
     if (res.code === 200) {
       orderList.value = res.data.records || []
       total.value = res.data.total || 0
+      startCountdown()
     }
   } catch {
     ElMessage.error('获取订单列表失败')
@@ -194,6 +244,12 @@ onMounted(() => {
   }
   fetchOrders()
 })
+
+onBeforeUnmount(() => {
+  if (globalTimer) {
+    clearInterval(globalTimer)
+  }
+})
 </script>
 
 <template>
@@ -218,6 +274,12 @@ onMounted(() => {
             <span class="time">{{ formatDate(order.createTime) }}</span>
             <span class="divider" />
             <span class="sn">单号: {{ order.orderSn }}</span>
+            <template v-if="order.status === 0 && countdowns[order.id]">
+                <span class="divider" />
+                <span class="countdown-text">
+                  <span class="highlight">{{ countdowns[order.id] }}</span> 后自动关闭
+                </span>
+            </template>
           </div>
           <el-tag :type="statusConfig[order.status]?.type" effect="dark" size="small" round>
             {{ statusConfig[order.status]?.text }}
@@ -360,6 +422,19 @@ onMounted(() => {
   gap: 8px;
   font-size: 13px;
   color: #64748b;
+}
+/* 倒计时样式 */
+.countdown-text {
+  font-size: 13px;
+  /* color: #64748b; */
+  display: inline-flex;
+  align-items: center;
+}
+.countdown-text .highlight {
+  color: #ef4444; /* 红色高亮 */
+  font-weight: 600;
+  margin: 0 4px;
+  font-family: monospace;
 }
 .divider { width: 1px; height: 12px; background: #e2e8f0; }
 .sn { font-family: monospace; color: #334155; }
