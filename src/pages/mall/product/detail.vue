@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { mallProductApi } from '@@/apis/mall/product'
+import { mallProductApi } from "@@/apis/mall/product"
 import { getFullUrl } from "@@/apis/request"
-import { ArrowRight } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
-import { mallCartApi } from '@/common/apis/mall/cart'
-import { useCartStore } from '@/pinia/stores/cart'
+import { ArrowRight } from "@element-plus/icons-vue"
+import { ElMessage } from "element-plus"
+import { useRoute, useRouter } from "vue-router"
+import { mallCartApi } from "@/common/apis/mall/cart"
+import { useCartStore } from "@/pinia/stores/cart"
 import { useUserStore } from "@/pinia/stores/user"
-
 
 const route = useRoute()
 const router = useRouter()
@@ -19,32 +18,31 @@ const productId = route.params.id as string
 
 // 响应式数据
 const product = ref<any>(null)
-const activeImage = ref('')
+const activeImage = ref("")
 const currentSku = ref<any>(null)
 const quantity = ref(1)
 
 // 控制 Tabs 默认选中 "detail"
-const activeTab = ref('detail')
-
+const activeTab = ref("detail")
 
 async function handleAddToCart() {
   console.log(currentSku.value)
   // 登录校验
   if (!userStore.token) {
-    ElMessage.warning('请先登录后再操作')
-    router.push('/mall/login')
+    ElMessage.warning("请先登录后再操作")
+    router.push("/mall/login")
     return
   }
 
   // 规格校验
   if (!currentSku.value) {
-    ElMessage.warning('请选择商品规格')
+    ElMessage.warning("请选择商品规格")
     return
   }
 
   // 库存校验
   if (quantity.value > currentSku.value.stock) {
-    ElMessage.error('库存不足')
+    ElMessage.error("库存不足")
     return
   }
 
@@ -81,15 +79,14 @@ async function handleAddToCart() {
 
     // 交互反馈
     ElNotification({
-      title: '已加入购物车',
+      title: "已加入购物车",
       message: `${submitData.productName} 数量：${submitData.quantity}`,
-      type: 'success',
-      position: 'bottom-right'
+      type: "success",
+      position: "bottom-right"
     })
-
   } catch (error) {
-    console.error('购物车操作失败:', error)
-    ElMessage.error('加入购物车失败，请稍后再试')
+    console.error("购物车操作失败:", error)
+    ElMessage.error("加入购物车失败，请稍后再试")
   }
 }
 
@@ -97,31 +94,31 @@ async function handleAddToCart() {
 function handleBuyNow() {
   // 登录校验
   if (!userStore.token) {
-    ElMessage.warning('请先登录后再操作')
-    router.push('/mall/login')
+    ElMessage.warning("请先登录后再操作")
+    router.push("/mall/login")
     return
   }
 
   // 规格校验
   if (!currentSku.value) {
-    ElMessage.warning('请选择商品规格')
+    ElMessage.warning("请选择商品规格")
     return
   }
 
   // 库存校验
   if (quantity.value > currentSku.value.stock) {
-    ElMessage.error('库存不足')
+    ElMessage.error("库存不足")
     return
   }
 
   // 带参数跳转到结算页
   router.push({
-    path: '/mall/checkout',
+    path: "/mall/checkout",
     query: {
       id: product.value.id,
       skuId: currentSku.value.id,
       num: quantity.value,
-      source: 'buyNow'
+      source: "buyNow"
     }
   })
 }
@@ -137,7 +134,7 @@ async function initData() {
       // 解析相册并去重
       let albumArray: string[] = []
       try {
-        albumArray = JSON.parse(data.albumPics || '[]')
+        albumArray = JSON.parse(data.albumPics || "[]")
         // 如果相册第一张图和主图一样，剔除相册第一张
         if (albumArray.length > 0 && albumArray[0] === data.pic) {
           albumArray.shift()
@@ -160,18 +157,18 @@ async function initData() {
       }
     }
   } catch {
-    ElMessage.error('获取商品详情失败')
+    ElMessage.error("获取商品详情失败")
   } finally {
     loading.value = false
   }
 }
 
-function selectSku (sku: any) {
+function selectSku(sku: any) {
   currentSku.value = sku
   activeImage.value = sku.pic ? getFullUrl(sku.pic) : getFullUrl(product.value.pic)
 }
 
-function parseSpData (spDataStr: string) {
+function parseSpData(spDataStr: string) {
   try {
     return JSON.parse(spDataStr)
   } catch {
@@ -188,9 +185,13 @@ onMounted(() => {
   <div class="product-detail bg-gray-50 min-h-screen pb-12">
     <div class="container mx-auto px-4 py-4">
       <el-breadcrumb :separator-icon="ArrowRight">
-        <el-breadcrumb-item :to="{ path: '/mall/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/mall/home' }">
+          首页
+        </el-breadcrumb-item>
         <el-breadcrumb-item>商品详情</el-breadcrumb-item>
-        <el-breadcrumb-item v-if="product">{{ product.productName }}</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="product">
+          {{ product.productName }}
+        </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
@@ -200,7 +201,6 @@ onMounted(() => {
 
     <div v-else-if="product" class="container mx-auto px-4">
       <div class="bg-white rounded-xl shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-8 p-6">
-
         <div class="md:col-span-5 flex flex-col gap-4">
           <div class="aspect-square rounded-lg overflow-hidden border border-gray-100">
             <el-image
@@ -230,7 +230,9 @@ onMounted(() => {
         </div>
 
         <div class="md:col-span-7 flex flex-col">
-          <h1 class="text-2xl font-bold text-gray-800">{{ product.productName }}</h1>
+          <h1 class="text-2xl font-bold text-gray-800">
+            {{ product.productName }}
+          </h1>
 
           <div class="mt-6 p-4 bg-orange-50 rounded-lg">
             <div class="flex items-baseline gap-2">
@@ -242,7 +244,9 @@ onMounted(() => {
 
           <div class="mt-8 space-y-6">
             <div v-if="product.skuList?.length">
-              <div class="text-sm font-medium text-gray-700 mb-3">规格选择</div>
+              <div class="text-sm font-medium text-gray-700 mb-3">
+                规格选择
+              </div>
               <div class="flex flex-wrap gap-3">
                 <button
                   v-for="sku in product.skuList" :key="sku.id"
@@ -265,13 +269,17 @@ onMounted(() => {
             <div class="flex items-center gap-4">
               <span class="text-sm font-medium text-gray-700">数量</span>
               <el-input-number v-model="quantity" :min="1" :max="currentSku?.stock || 1" />
-              <span class="text-xs text-gray-400">库存: {{ currentSku?.stock || 0 }}</span>
+              <span class="text-xs text-gray-400">库存: {{ (currentSku?.stock - currentSku?.lockStock) || 0 }}</span>
             </div>
           </div>
 
           <div class="mt-12 flex gap-4">
-            <el-button type="primary" size="large" class="flex-1 !h-12" @click="handleAddToCart">加入购物车</el-button>
-            <el-button type="danger" plain size="large" class="flex-1 !h-12" @click="handleBuyNow">立即购买</el-button>
+            <el-button type="primary" size="large" class="flex-1 !h-12" @click="handleAddToCart">
+              加入购物车
+            </el-button>
+            <el-button type="danger" plain size="large" class="flex-1 !h-12" @click="handleBuyNow">
+              立即购买
+            </el-button>
           </div>
         </div>
       </div>
@@ -287,9 +295,15 @@ onMounted(() => {
           <el-tab-pane label="规格参数" name="params">
             <div class="py-6">
               <el-descriptions :column="1" border>
-                <el-descriptions-item label="商品名称">{{ product.productName }}</el-descriptions-item>
-                <el-descriptions-item label="计量单位">{{ product.unit }}</el-descriptions-item>
-                <el-descriptions-item label="分类编号">{{ product.categoryId }}</el-descriptions-item>
+                <el-descriptions-item label="商品名称">
+                  {{ product.productName }}
+                </el-descriptions-item>
+                <el-descriptions-item label="计量单位">
+                  {{ product.unit }}
+                </el-descriptions-item>
+                <el-descriptions-item label="分类编号">
+                  {{ product.categoryId }}
+                </el-descriptions-item>
               </el-descriptions>
             </div>
           </el-tab-pane>
@@ -300,8 +314,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar { height: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}
 
 :deep(.detail-content img) {
   max-width: 100% !important;
@@ -309,5 +328,8 @@ onMounted(() => {
   display: block;
   margin: 0 auto;
 }
-:deep(.el-tabs__item) { font-size: 16px; padding: 0 30px; }
+:deep(.el-tabs__item) {
+  font-size: 16px;
+  padding: 0 30px;
+}
 </style>
